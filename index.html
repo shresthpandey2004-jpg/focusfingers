@@ -909,114 +909,230 @@
         let screenShake = 0;
         let screenFlash = 0;
 
-        // ==================== AUDIO SYSTEM ====================
+        // ==================== ENHANCED AUDIO SYSTEM ====================
+        let audioContext = null;
+        let backgroundMusic = null;
+        let musicGainNode = null;
+        let soundEnabled = true;
+        let musicEnabled = true;
+        let masterVolume = 0.7;
+
         function initAudio() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
 
-        function playSound(type) {
-            if (!audioContext) return;
+        function playSound(type, intensity = 1) {
+            if (!audioContext || !soundEnabled) return;
 
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
+            const filterNode = audioContext.createBiquadFilter();
 
-            oscillator.connect(gainNode);
+            oscillator.connect(filterNode);
+            filterNode.connect(gainNode);
             gainNode.connect(audioContext.destination);
+
+            const baseVolume = masterVolume * intensity;
 
             switch (type) {
                 case 'hit':
-                    oscillator.frequency.value = 440 + (combo * 20);
+                    // Different hit sounds based on combo
+                    const hitFreq = 440 + (combo * 30);
+                    oscillator.frequency.value = hitFreq;
                     oscillator.type = 'sine';
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    filterNode.frequency.value = hitFreq * 2;
+                    filterNode.Q.value = 5;
+                    gainNode.gain.setValueAtTime(baseVolume * 0.4, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    // Add harmonic for richness
+                    const harmonic = audioContext.createOscillator();
+                    const harmonicGain = audioContext.createGain();
+                    harmonic.frequency.value = hitFreq * 1.5;
+                    harmonic.type = 'triangle';
+                    harmonic.connect(harmonicGain);
+                    harmonicGain.connect(audioContext.destination);
+                    harmonicGain.gain.setValueAtTime(baseVolume * 0.2, audioContext.currentTime);
+                    harmonicGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    harmonic.start(audioContext.currentTime);
+                    harmonic.stop(audioContext.currentTime + 0.2);
                     break;
 
                 case 'miss':
-                    oscillator.frequency.value = 150;
-                    oscillator.type = 'square';
-                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
+                    oscillator.frequency.value = 120;
+                    oscillator.type = 'sawtooth';
+                    filterNode.frequency.value = 200;
+                    filterNode.type = 'lowpass';
+                    gainNode.gain.setValueAtTime(baseVolume * 0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
                     break;
 
                 case 'powerup':
-                    oscillator.frequency.value = 880;
-                    oscillator.type = 'triangle';
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.5);
-                    break;
+                    // Ascending arpeggio for power-up
+                    const frequencies = [523, 659, 784, 1047]; // C, E, G, C
+                    frequencies.forEach((freq, index) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle';
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        gain.gain.setValueAtTime(baseVolume * 0.3, audioContext.currentTime + index * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.1 + 0.3);
+                        osc.start(audioContext.currentTime + index * 0.1);
+                        osc.stop(audioContext.currentTime + index * 0.1 + 0.3);
+                    });
+                    return; // Don't start the main oscillator
 
                 case 'combo':
-                    oscillator.frequency.value = 660;
+                    // Special combo sound with multiple frequencies
+                    const comboFreqs = [440, 554, 659]; // A, C#, E chord
+                    comboFreqs.forEach((freq, index) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        gain.gain.setValueAtTime(baseVolume * 0.25, audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                        osc.start(audioContext.currentTime);
+                        osc.stop(audioContext.currentTime + 0.6);
+                    });
+                    return;
+
+                case 'menu':
+                    oscillator.frequency.value = 800;
                     oscillator.type = 'sine';
-                    gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.4);
+                    gainNode.gain.setValueAtTime(baseVolume * 0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
                     break;
+
+                case 'start':
+                    // Game start fanfare
+                    const startFreqs = [262, 330, 392, 523]; // C, E, G, C
+                    startFreqs.forEach((freq, index) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle';
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        gain.gain.setValueAtTime(baseVolume * 0.3, audioContext.currentTime + index * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.15 + 0.4);
+                        osc.start(audioContext.currentTime + index * 0.15);
+                        osc.stop(audioContext.currentTime + index * 0.15 + 0.4);
+                    });
+                    return;
             }
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
         }
 
-        // Background Music System
-        let musicOscillators = [];
-        let musicGainNode = null;
-        let musicPlaying = false;
-        let musicInterval = null;
-
+        // Enhanced Background Music System
         function startBackgroundMusic() {
-            if (!audioContext || musicPlaying) return;
-            musicPlaying = true;
+            if (!audioContext || !musicEnabled || backgroundMusic) return;
 
-            // Create gain node for music
             musicGainNode = audioContext.createGain();
-            musicGainNode.gain.value = 0.08; // Low volume
+            musicGainNode.gain.value = masterVolume * 0.15; // Low volume for background
             musicGainNode.connect(audioContext.destination);
 
-            // Layered music (bass, melody, harmony)
-            const notes = [
-                [110, 0.25],  // Bass
-                [220, 0.12],  // Melody
-                [330, 0.08],  // Harmony
-                [440, 0.05]   // High
+            // Create ambient background music with multiple layers
+            const musicLayers = [
+                { freq: 110, type: 'sine', gain: 0.3 },      // Bass
+                { freq: 220, type: 'triangle', gain: 0.2 },  // Mid
+                { freq: 330, type: 'sine', gain: 0.15 },     // Harmony
+                { freq: 440, type: 'triangle', gain: 0.1 }   // High
             ];
 
-            notes.forEach(([freq, gain]) => {
+            backgroundMusic = [];
+
+            musicLayers.forEach((layer, index) => {
                 const osc = audioContext.createOscillator();
-                const oscGain = audioContext.createGain();
+                const layerGain = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
 
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                oscGain.gain.value = gain;
+                osc.frequency.value = layer.freq;
+                osc.type = layer.type;
+                layerGain.gain.value = layer.gain;
+                
+                filter.type = 'lowpass';
+                filter.frequency.value = layer.freq * 3;
+                filter.Q.value = 1;
 
-                osc.connect(oscGain);
-                oscGain.connect(musicGainNode);
+                osc.connect(filter);
+                filter.connect(layerGain);
+                layerGain.connect(musicGainNode);
+
+                // Add subtle frequency modulation for organic feel
+                const lfo = audioContext.createOscillator();
+                const lfoGain = audioContext.createGain();
+                lfo.frequency.value = 0.1 + (index * 0.05); // Very slow modulation
+                lfoGain.gain.value = 2;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                
                 osc.start();
-
-                musicOscillators.push(osc);
+                lfo.start();
+                
+                backgroundMusic.push({ osc, lfo, layerGain });
             });
 
-            // Dynamic music based on combo
-            musicInterval = setInterval(() => {
-                if (!musicPlaying || !musicGainNode) return;
+            // Dynamic music that responds to combo
+            setInterval(() => {
+                if (!musicGainNode || !musicEnabled) return;
                 const intensity = Math.min(combo / 20, 1);
-                musicGainNode.gain.value = 0.08 + (intensity * 0.12);
+                musicGainNode.gain.value = masterVolume * (0.15 + intensity * 0.1);
+                
+                // Modulate filter frequencies based on combo
+                backgroundMusic.forEach((layer, index) => {
+                    if (layer.layerGain) {
+                        const targetGain = musicLayers[index].gain * (1 + intensity * 0.5);
+                        layer.layerGain.gain.setTargetAtTime(targetGain, audioContext.currentTime, 0.5);
+                    }
+                });
             }, 1000);
         }
 
         function stopBackgroundMusic() {
-            musicOscillators.forEach(osc => {
-                try { osc.stop(); } catch (e) { }
-            });
-            musicOscillators = [];
-            musicPlaying = false;
-            if (musicInterval) clearInterval(musicInterval);
+            if (backgroundMusic) {
+                backgroundMusic.forEach(layer => {
+                    try { 
+                        layer.osc.stop(); 
+                        layer.lfo.stop();
+                    } catch (e) { }
+                });
+                backgroundMusic = null;
+            }
+            if (musicGainNode) {
+                musicGainNode.disconnect();
+                musicGainNode = null;
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            return soundEnabled;
+        }
+
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            if (musicEnabled) {
+                startBackgroundMusic();
+            } else {
+                stopBackgroundMusic();
+            }
+            return musicEnabled;
+        }
+
+        function setVolume(volume) {
+            masterVolume = Math.max(0, Math.min(1, volume));
+            if (musicGainNode) {
+                musicGainNode.gain.value = masterVolume * 0.15;
+            }
         }
 
         // ==================== UTILITY FUNCTIONS ====================
@@ -1047,9 +1163,9 @@
             return parseInt(localStorage.getItem(key)) || 0;
         }
 
-        // ==================== PARTICLE SYSTEM ====================
+        // ==================== ENHANCED PARTICLE SYSTEM ====================
         class Particle {
-            constructor(x, y, color, velocity, lifespan) {
+            constructor(x, y, color, velocity, lifespan, type = 'explosion') {
                 this.x = x;
                 this.y = y;
                 this.vx = velocity.x;
@@ -1057,39 +1173,141 @@
                 this.color = color;
                 this.lifespan = lifespan;
                 this.createdAt = Date.now();
-                this.size = randomRange(2, 5);
+                this.size = randomRange(2, 6);
                 this.alpha = 1;
+                this.type = type;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+                this.gravity = type === 'spark' ? 0.1 : 0.2;
+                this.friction = 0.98;
             }
 
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
-                this.vy += 0.2; // gravity
+                this.vy += this.gravity;
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.rotation += this.rotationSpeed;
 
                 const age = Date.now() - this.createdAt;
                 this.alpha = 1 - (age / this.lifespan);
 
-                return age < this.lifespan;
+                // Size animation based on type
+                if (this.type === 'spark') {
+                    this.size = Math.max(0, this.size - 0.05);
+                } else if (this.type === 'star') {
+                    this.size = 3 + Math.sin(age * 0.01) * 2;
+                }
+
+                return age < this.lifespan && this.alpha > 0;
             }
 
             draw() {
+                ctx.save();
                 ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                switch (this.type) {
+                    case 'explosion':
+                        // Regular circular particle
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
+                    case 'spark':
+                        // Elongated spark
+                        ctx.fillStyle = this.color;
+                        ctx.fillRect(-this.size * 2, -this.size * 0.5, this.size * 4, this.size);
+                        break;
+
+                    case 'star':
+                        // Star-shaped particle
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        for (let i = 0; i < 5; i++) {
+                            const angle = (i * Math.PI * 2) / 5;
+                            const x = Math.cos(angle) * this.size;
+                            const y = Math.sin(angle) * this.size;
+                            if (i === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+
+                    case 'trail':
+                        // Trail particle with gradient
+                        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                        gradient.addColorStop(0, this.color);
+                        gradient.addColorStop(1, this.color + '00');
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                }
+
+                ctx.restore();
             }
         }
 
-        function createParticles(x, y, color, count = 20) {
+        function createParticles(x, y, color, count = 20, type = 'explosion') {
             for (let i = 0; i < count; i++) {
-                const angle = (Math.PI * 2 * i) / count;
-                const speed = randomRange(2, 5);
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+                const speed = randomRange(2, 8);
+                const particleType = type === 'mixed' ? 
+                    ['explosion', 'spark', 'star', 'trail'][Math.floor(Math.random() * 4)] : type;
+                
                 particles.push(new Particle(
                     x, y, color,
-                    { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed },
-                    600
+                    { 
+                        x: Math.cos(angle) * speed + (Math.random() - 0.5) * 2, 
+                        y: Math.sin(angle) * speed + (Math.random() - 0.5) * 2 
+                    },
+                    randomRange(400, 800),
+                    particleType
+                ));
+            }
+        }
+
+        function createComboParticles(x, y) {
+            // Special combo particles with multiple colors
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffeaa7', '#96ceb4'];
+            for (let i = 0; i < 30; i++) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const angle = Math.random() * Math.PI * 2;
+                const speed = randomRange(3, 10);
+                
+                particles.push(new Particle(
+                    x, y, color,
+                    { 
+                        x: Math.cos(angle) * speed, 
+                        y: Math.sin(angle) * speed - 2 
+                    },
+                    randomRange(600, 1000),
+                    'star'
+                ));
+            }
+        }
+
+        function createPowerupParticles(x, y) {
+            // Golden sparkle effect for power-ups
+            for (let i = 0; i < 25; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = randomRange(1, 6);
+                
+                particles.push(new Particle(
+                    x, y, '#ffd700',
+                    { 
+                        x: Math.cos(angle) * speed, 
+                        y: Math.sin(angle) * speed - 1 
+                    },
+                    randomRange(800, 1200),
+                    'spark'
                 ));
             }
         }
@@ -1301,6 +1519,8 @@
 
             if (target.isPowerup) {
                 activatePowerup(target);
+                playSound('powerup', 1.2);
+                createPowerupParticles(target.x, target.y);
             } else {
                 // Calculate points
                 const basePoints = 100;
@@ -1316,14 +1536,23 @@
                 // Create effects
                 effects.push(new ScorePopup(target.x, target.y, points));
                 effects.push(new RippleEffect(target.x, target.y, target.color));
-                createParticles(target.x, target.y, target.color, 15);
 
-                // Combo milestone
-                if (combo % 10 === 0) {
-                    playSound('combo');
-                    createParticles(target.x, target.y, '#ffea00', 30);
+                // Enhanced particle effects based on combo
+                if (combo >= 25) {
+                    createComboParticles(target.x, target.y);
+                    playSound('combo', 1.5);
+                } else if (combo >= 10) {
+                    createParticles(target.x, target.y, target.color, 25, 'mixed');
+                    playSound('hit', 1.2);
                 } else {
-                    playSound('hit');
+                    createParticles(target.x, target.y, target.color, 15, 'explosion');
+                    playSound('hit', 1.0);
+                }
+
+                // Combo milestone effects
+                if (combo % 10 === 0 && combo > 0) {
+                    createComboParticles(target.x, target.y);
+                    playSound('combo', 1.3);
                 }
             }
 
@@ -1447,6 +1676,12 @@
             mainMenu.classList.add('hide');
             pauseOverlay.style.display = 'none';
             endGameScreen.style.display = 'none';
+
+            // Start background music
+            startBackgroundMusic();
+            
+            // Play game start sound
+            playSound('start');
 
             // Spawn initial targets
             for (let i = 0; i < 3; i++) {
@@ -1892,6 +2127,7 @@
         // Difficulty selection
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+                playSound('menu');
                 document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 selectedDifficulty = btn.dataset.difficulty;
@@ -1902,6 +2138,7 @@
         // Mode selection
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+                playSound('menu');
                 document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 selectedMode = btn.dataset.mode;
@@ -1912,6 +2149,7 @@
         // Tracking mode selection
         document.querySelectorAll('.tracking-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+                playSound('menu');
                 document.querySelectorAll('.tracking-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 trackingMode = btn.dataset.tracking;
