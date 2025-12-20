@@ -1433,7 +1433,6 @@
         let screenShake = 0;
         let screenFlash = 0;
         let backgroundHue = 0;
-        let cursorTrail = [];
         let slowMotionFactor = 1;
 
         // ==================== ENHANCED AUDIO SYSTEM ====================
@@ -2442,34 +2441,7 @@
         }
 
         function drawCursor() {
-            // Add cursor position to trail
-            cursorTrail.push({ x: cursorX, y: cursorY, time: Date.now() });
-            
-            // Remove old trail points
-            cursorTrail = cursorTrail.filter(point => Date.now() - point.time < 500);
-            
-            // Draw cursor trail
-            if (cursorTrail.length > 1) {
-                ctx.globalAlpha = 0.3;
-                ctx.strokeStyle = '#00d9ff';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                for (let i = 0; i < cursorTrail.length; i++) {
-                    const point = cursorTrail[i];
-                    const alpha = (Date.now() - point.time) / 500;
-                    ctx.globalAlpha = 0.3 * (1 - alpha);
-                    
-                    if (i === 0) {
-                        ctx.moveTo(point.x, point.y);
-                    } else {
-                        ctx.lineTo(point.x, point.y);
-                    }
-                }
-                ctx.stroke();
-                ctx.globalAlpha = 1;
-            }
-
-            // Trail effect
+            // Trail effect (simple circle, no line trail)
             ctx.globalAlpha = 0.3;
             ctx.strokeStyle = '#00d9ff';
             ctx.lineWidth = 2;
