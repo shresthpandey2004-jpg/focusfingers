@@ -349,35 +349,157 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
-            padding: 50px;
+            padding: 40px 50px;
             border-radius: 20px;
-            border: 3px solid #00ff41;
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.8);
+            border: 3px solid #4ecdc4;
+            box-shadow: 0 0 50px rgba(78, 205, 196, 0.8);
             z-index: 10000;
             max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
             text-align: center;
             pointer-events: all;
         }
 
         .tutorial h2 {
             font-size: 36px;
-            color: #00ff41;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 1);
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 1);
             margin-bottom: 30px;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .tutorial p {
-            font-size: 20px;
-            color: #00d9ff;
-            text-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+            font-size: 18px;
+            color: #ffeaa7;
+            text-shadow: 0 0 10px rgba(255, 234, 167, 0.6);
             margin: 15px 0;
             line-height: 1.6;
+            font-family: 'Poppins', sans-serif;
         }
 
         .tutorial .highlight {
-            color: #ffea00;
+            color: #ff6b6b;
             font-weight: 700;
-            text-shadow: 0 0 15px rgba(255, 234, 0, 0.8);
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+        }
+
+        /* Settings Panel Styles */
+        .settings-section {
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .settings-section h3 {
+            font-size: 20px;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-family: 'Space Grotesk', sans-serif;
+            text-align: center;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px 15px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .setting-item label {
+            font-size: 16px;
+            color: #ffeaa7;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider {
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.8);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.8);
+        }
+
+        .toggle-btn {
+            padding: 8px 20px;
+            border: 2px solid #ff6b6b;
+            border-radius: 20px;
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .toggle-btn.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            color: #1a1a2e;
+        }
+
+        .dropdown {
+            padding: 8px 15px;
+            border: 2px solid #4ecdc4;
+            border-radius: 10px;
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 100px;
+        }
+
+        .dropdown option {
+            background: #1a1a2e;
+            color: #4ecdc4;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        #volumeValue, #sensitivityValue, #hoverTimeValue {
+            font-size: 14px;
+            color: #4ecdc4;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
         }
 
         /* End Game Screen */
@@ -659,13 +781,78 @@
         <button class="menu-btn" id="closeTutorial">GOT IT!</button>
     </div>
 
-    <!-- Settings (placeholder for now) -->
+    <!-- Settings (Enhanced) -->
     <div id="settings" class="tutorial hide">
-        <h2>SETTINGS</h2>
-        <p>🔊 Audio: <span class="highlight">ON</span></p>
-        <p>✨ Particles: <span class="highlight">HIGH</span></p>
-        <p>⚙️ More settings coming soon...</p>
-        <button class="menu-btn" id="closeSettings">BACK</button>
+        <h2>⚙️ SETTINGS</h2>
+        
+        <div class="settings-section">
+            <h3>🔊 AUDIO CONTROLS</h3>
+            <div class="setting-item">
+                <label>Master Volume</label>
+                <div class="slider-container">
+                    <input type="range" id="volumeSlider" min="0" max="100" value="70" class="slider">
+                    <span id="volumeValue">70%</span>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <label>Sound Effects</label>
+                <button class="toggle-btn active" id="soundToggle">
+                    <span class="toggle-text">ON</span>
+                </button>
+            </div>
+            
+            <div class="setting-item">
+                <label>Background Music</label>
+                <button class="toggle-btn active" id="musicToggle">
+                    <span class="toggle-text">ON</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>🎯 GAMEPLAY</h3>
+            <div class="setting-item">
+                <label>Hand Sensitivity</label>
+                <div class="slider-container">
+                    <input type="range" id="sensitivitySlider" min="1" max="10" value="5" class="slider">
+                    <span id="sensitivityValue">5</span>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <label>Hover Time</label>
+                <div class="slider-container">
+                    <input type="range" id="hoverTimeSlider" min="200" max="600" value="350" class="slider">
+                    <span id="hoverTimeValue">0.35s</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>🎨 VISUAL</h3>
+            <div class="setting-item">
+                <label>Particle Effects</label>
+                <select id="particleQuality" class="dropdown">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="ultra">Ultra</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label>Screen Effects</label>
+                <button class="toggle-btn active" id="screenEffectsToggle">
+                    <span class="toggle-text">ON</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="settings-buttons">
+            <button class="menu-btn" id="resetSettings">🔄 RESET</button>
+            <button class="menu-btn" id="closeSettings">✅ SAVE</button>
+        </div>
     </div>
 
     <!-- Game Canvas -->
@@ -1135,6 +1322,91 @@
             }
         }
 
+        // ==================== SETTINGS SYSTEM ====================
+        let gameSettings = {
+            masterVolume: 0.7,
+            soundEnabled: true,
+            musicEnabled: true,
+            handSensitivity: 5,
+            hoverTime: 350,
+            particleQuality: 'medium',
+            screenEffectsEnabled: true
+        };
+
+        function loadSettings() {
+            const saved = localStorage.getItem('focusFingers_settings');
+            if (saved) {
+                gameSettings = { ...gameSettings, ...JSON.parse(saved) };
+            }
+            applySettings();
+            updateSettingsUI();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('focusFingers_settings', JSON.stringify(gameSettings));
+            applySettings();
+        }
+
+        function applySettings() {
+            // Apply audio settings
+            masterVolume = gameSettings.masterVolume;
+            soundEnabled = gameSettings.soundEnabled;
+            musicEnabled = gameSettings.musicEnabled;
+            setVolume(masterVolume);
+
+            // Apply gameplay settings
+            Object.keys(CONFIG).forEach(difficulty => {
+                CONFIG[difficulty].hoverTime = gameSettings.hoverTime;
+            });
+
+            // Apply visual settings
+            // Particle quality will be used in createParticles function
+        }
+
+        function updateSettingsUI() {
+            // Update sliders
+            document.getElementById('volumeSlider').value = gameSettings.masterVolume * 100;
+            document.getElementById('volumeValue').textContent = Math.round(gameSettings.masterVolume * 100) + '%';
+            
+            document.getElementById('sensitivitySlider').value = gameSettings.handSensitivity;
+            document.getElementById('sensitivityValue').textContent = gameSettings.handSensitivity;
+            
+            document.getElementById('hoverTimeSlider').value = gameSettings.hoverTime;
+            document.getElementById('hoverTimeValue').textContent = (gameSettings.hoverTime / 1000).toFixed(2) + 's';
+
+            // Update toggles
+            const soundToggle = document.getElementById('soundToggle');
+            const musicToggle = document.getElementById('musicToggle');
+            const screenToggle = document.getElementById('screenEffectsToggle');
+
+            soundToggle.classList.toggle('active', gameSettings.soundEnabled);
+            soundToggle.querySelector('.toggle-text').textContent = gameSettings.soundEnabled ? 'ON' : 'OFF';
+
+            musicToggle.classList.toggle('active', gameSettings.musicEnabled);
+            musicToggle.querySelector('.toggle-text').textContent = gameSettings.musicEnabled ? 'ON' : 'OFF';
+
+            screenToggle.classList.toggle('active', gameSettings.screenEffectsEnabled);
+            screenToggle.querySelector('.toggle-text').textContent = gameSettings.screenEffectsEnabled ? 'ON' : 'OFF';
+
+            // Update dropdown
+            document.getElementById('particleQuality').value = gameSettings.particleQuality;
+        }
+
+        function resetSettings() {
+            gameSettings = {
+                masterVolume: 0.7,
+                soundEnabled: true,
+                musicEnabled: true,
+                handSensitivity: 5,
+                hoverTime: 350,
+                particleQuality: 'medium',
+                screenEffectsEnabled: true
+            };
+            saveSettings();
+            updateSettingsUI();
+            playSound('menu');
+        }
+
         // ==================== UTILITY FUNCTIONS ====================
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
@@ -1542,10 +1814,16 @@
                     createComboParticles(target.x, target.y);
                     playSound('combo', 1.5);
                 } else if (combo >= 10) {
-                    createParticles(target.x, target.y, target.color, 25, 'mixed');
+                    const count = gameSettings.particleQuality === 'low' ? 15 : 
+                                 gameSettings.particleQuality === 'medium' ? 25 : 
+                                 gameSettings.particleQuality === 'high' ? 35 : 45;
+                    createParticles(target.x, target.y, target.color, count, 'mixed');
                     playSound('hit', 1.2);
                 } else {
-                    createParticles(target.x, target.y, target.color, 15, 'explosion');
+                    const count = gameSettings.particleQuality === 'low' ? 10 : 
+                                 gameSettings.particleQuality === 'medium' ? 15 : 
+                                 gameSettings.particleQuality === 'high' ? 20 : 25;
+                    createParticles(target.x, target.y, target.color, count, 'explosion');
                     playSound('hit', 1.0);
                 }
 
@@ -2178,11 +2456,65 @@
 
         // Settings
         document.getElementById('settingsBtn').addEventListener('click', () => {
+            playSound('menu');
             settings.classList.remove('hide');
         });
 
         document.getElementById('closeSettings').addEventListener('click', () => {
+            playSound('menu');
+            saveSettings();
             settings.classList.add('hide');
+        });
+
+        // Settings controls
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            gameSettings.masterVolume = e.target.value / 100;
+            document.getElementById('volumeValue').textContent = e.target.value + '%';
+            setVolume(gameSettings.masterVolume);
+        });
+
+        document.getElementById('sensitivitySlider').addEventListener('input', (e) => {
+            gameSettings.handSensitivity = parseInt(e.target.value);
+            document.getElementById('sensitivityValue').textContent = e.target.value;
+        });
+
+        document.getElementById('hoverTimeSlider').addEventListener('input', (e) => {
+            gameSettings.hoverTime = parseInt(e.target.value);
+            document.getElementById('hoverTimeValue').textContent = (e.target.value / 1000).toFixed(2) + 's';
+        });
+
+        document.getElementById('soundToggle').addEventListener('click', () => {
+            gameSettings.soundEnabled = !gameSettings.soundEnabled;
+            soundEnabled = gameSettings.soundEnabled;
+            updateSettingsUI();
+            if (gameSettings.soundEnabled) playSound('menu');
+        });
+
+        document.getElementById('musicToggle').addEventListener('click', () => {
+            gameSettings.musicEnabled = !gameSettings.musicEnabled;
+            musicEnabled = gameSettings.musicEnabled;
+            if (musicEnabled && gameState === 'playing') {
+                startBackgroundMusic();
+            } else {
+                stopBackgroundMusic();
+            }
+            updateSettingsUI();
+            playSound('menu');
+        });
+
+        document.getElementById('screenEffectsToggle').addEventListener('click', () => {
+            gameSettings.screenEffectsEnabled = !gameSettings.screenEffectsEnabled;
+            updateSettingsUI();
+            playSound('menu');
+        });
+
+        document.getElementById('particleQuality').addEventListener('change', (e) => {
+            gameSettings.particleQuality = e.target.value;
+            playSound('menu');
+        });
+
+        document.getElementById('resetSettings').addEventListener('click', () => {
+            resetSettings();
         });
 
         // Pause controls
@@ -2357,6 +2689,7 @@
 
         // ==================== INITIALIZATION ====================
         // Don't auto-initialize MediaPipe, wait for start button
+        loadSettings(); // Load saved settings
         updateHighScoreDisplay();
         update();
     </script>
