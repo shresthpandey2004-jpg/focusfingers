@@ -16,14 +16,16 @@
 
         body {
             font-family: 'Rajdhani', sans-serif;
-            background: #000;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             overflow: hidden;
             color: #fff;
+            margin: 0;
+            padding: 0;
         }
 
         #gameCanvas {
             display: block;
-            background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             cursor: none;
         }
 
@@ -67,16 +69,16 @@
 
         .score-label {
             font-size: 18px;
-            color: #00d9ff;
-            text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+            color: #4ecdc4;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.8);
             letter-spacing: 2px;
         }
 
         .score-value {
             font-size: 64px;
             font-weight: 900;
-            color: #00ff41;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 1), 0 0 40px rgba(0, 255, 65, 0.6);
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 1), 0 0 40px rgba(255, 107, 107, 0.6);
             line-height: 1;
             margin-top: 5px;
         }
@@ -92,16 +94,16 @@
 
         .combo-label {
             font-size: 18px;
-            color: #ff006e;
-            text-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
+            color: #ffeaa7;
+            text-shadow: 0 0 10px rgba(255, 234, 167, 0.8);
             letter-spacing: 2px;
         }
 
         .combo-value {
             font-size: 64px;
             font-weight: 900;
-            color: #ffea00;
-            text-shadow: 0 0 20px rgba(255, 234, 0, 1), 0 0 40px rgba(255, 234, 0, 0.6);
+            color: #96ceb4;
+            text-shadow: 0 0 20px rgba(150, 206, 180, 1), 0 0 40px rgba(150, 206, 180, 0.6);
             line-height: 1;
             margin-top: 5px;
         }
@@ -111,18 +113,18 @@
             position: absolute;
             bottom: 30px;
             left: 30px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(26, 26, 46, 0.8);
             backdrop-filter: blur(10px);
             padding: 15px 25px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 217, 255, 0.4);
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(78, 205, 196, 0.4);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
         }
 
         .status-text {
             font-size: 16px;
-            color: #00d9ff;
-            text-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+            color: #4ecdc4;
+            text-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
             letter-spacing: 1px;
         }
 
@@ -131,8 +133,8 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #00ff41;
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
             margin-right: 8px;
             animation: pulse 1s ease-in-out infinite;
         }
@@ -158,7 +160,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -172,13 +174,13 @@
             font-weight: 900;
             letter-spacing: 8px;
             margin-bottom: 20px;
-            background: linear-gradient(45deg, #00ff41, #00d9ff, #ff006e, #ffea00, #00ff41);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: rainbowShift 3s ease infinite, titleFloat 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.6));
+            filter: drop-shadow(0 0 30px rgba(255, 107, 107, 0.6));
         }
 
         @keyframes rainbowShift {
@@ -207,10 +209,10 @@
 
         .menu-subtitle {
             font-size: 18px;
-            color: #00d9ff;
+            color: #ffeaa7;
             letter-spacing: 4px;
             margin-bottom: 40px;
-            text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+            text-shadow: 0 0 20px rgba(255, 234, 167, 0.8);
         }
 
         .menu-section {
@@ -219,8 +221,8 @@
 
         .menu-section h3 {
             font-size: 20px;
-            color: #ff006e;
-            text-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
+            color: #ff6b6b;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
             margin-bottom: 15px;
             letter-spacing: 2px;
         }
@@ -237,53 +239,55 @@
             font-size: 20px;
             font-family: 'Orbitron', monospace;
             font-weight: 700;
-            background: rgba(0, 255, 65, 0.1);
-            color: #00ff41;
-            border: 2px solid #00ff41;
-            border-radius: 10px;
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            border: 2px solid #4ecdc4;
+            border-radius: 15px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
             transition: all 0.3s ease;
             pointer-events: all;
         }
 
         .menu-btn:hover {
-            background: #00ff41;
-            color: #000;
-            box-shadow: 0 0 40px rgba(0, 255, 65, 0.8);
+            background: #4ecdc4;
+            color: #1a1a2e;
+            box-shadow: 0 0 40px rgba(78, 205, 196, 0.8);
             transform: scale(1.05);
         }
 
         .menu-btn.selected {
-            background: #00ff41;
-            color: #000;
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.8);
+            background: #4ecdc4;
+            color: #1a1a2e;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.8);
         }
 
         .menu-btn.secondary {
-            background: rgba(0, 217, 255, 0.1);
-            color: #00d9ff;
-            border-color: #00d9ff;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            background: rgba(255, 234, 167, 0.1);
+            color: #ffeaa7;
+            border-color: #ffeaa7;
+            box-shadow: 0 0 20px rgba(255, 234, 167, 0.3);
         }
 
         .menu-btn.secondary:hover {
-            background: #00d9ff;
-            box-shadow: 0 0 40px rgba(0, 217, 255, 0.8);
+            background: #ffeaa7;
+            color: #1a1a2e;
+            box-shadow: 0 0 40px rgba(255, 234, 167, 0.8);
         }
 
         .start-btn {
             margin-top: 40px;
             padding: 20px 80px;
             font-size: 32px;
-            background: linear-gradient(135deg, #00ff41, #00d9ff);
-            color: #000;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: #fff;
             border: none;
-            box-shadow: 0 0 40px rgba(0, 255, 65, 0.8);
+            border-radius: 25px;
+            box-shadow: 0 0 40px rgba(255, 107, 107, 0.8);
         }
 
         .start-btn:hover {
-            box-shadow: 0 0 60px rgba(0, 255, 65, 1);
+            box-shadow: 0 0 60px rgba(255, 107, 107, 1);
             transform: scale(1.1);
         }
 
@@ -294,7 +298,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -827,8 +831,8 @@
         // Constants
         const LERP_FACTOR = 0.35;
         const CURSOR_RADIUS = 15;
-        const NEON_COLORS = ['#00ff41', '#ff006e', '#00d9ff', '#ffea00'];
-        const POWERUP_COLOR = '#ffd700';
+        const NEON_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'];
+        const POWERUP_COLOR = '#ffd93d';
 
         // Audio Context
         let audioContext = null;
