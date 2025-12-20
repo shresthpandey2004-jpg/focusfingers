@@ -1,24 +1,18 @@
 {
   "name": "focus-fingers",
   "version": "1.0.0",
-  "description": "An interactive rhythm game controlled by hand tracking, color object detection, or mouse/keyboard",
+  "description": "Hand tracking rhythm game by Shresth Pandey",
   "main": "index.html",
   "scripts": {
-    "start": "serve .",
-    "build": "node build.js",
-    "dev": "serve ."
+    "start": "echo 'Open index.html in browser'",
+    "dev": "echo 'Open index.html in browser'"
   },
   "keywords": [
     "hand-tracking",
     "rhythm-game",
-    "mediapipe",
     "javascript",
-    "canvas",
     "game"
   ],
   "author": "Shresth Pandey",
-  "license": "MIT",
-  "devDependencies": {
-    "serve": "^14.0.0"
-  }
+  "license": "MIT"
 }
