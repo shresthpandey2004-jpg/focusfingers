@@ -579,26 +579,26 @@
         <div class="menu-section">
             <h3>SELECT DIFFICULTY</h3>
             <div class="menu-buttons">
-                <button class="menu-btn difficulty-btn selected" data-difficulty="easy">EASY</button>
-                <button class="menu-btn difficulty-btn" data-difficulty="medium">MEDIUM</button>
-                <button class="menu-btn difficulty-btn" data-difficulty="hard">HARD</button>
+                <button class="menu-btn difficulty-btn selected" data-difficulty="easy">BEGINNER</button>
+                <button class="menu-btn difficulty-btn" data-difficulty="medium">CHALLENGER</button>
+                <button class="menu-btn difficulty-btn" data-difficulty="hard">MASTER</button>
             </div>
         </div>
 
         <div class="menu-section">
             <h3>SELECT MODE</h3>
             <div class="menu-buttons">
-                <button class="menu-btn mode-btn selected" data-mode="classic">CLASSIC</button>
-                <button class="menu-btn mode-btn" data-mode="timeattack">TIME ATTACK</button>
-                <button class="menu-btn mode-btn" data-mode="accuracy">ACCURACY</button>
-                <button class="menu-btn mode-btn" data-mode="zen">ZEN</button>
+                <button class="menu-btn mode-btn selected" data-mode="classic">ENDLESS</button>
+                <button class="menu-btn mode-btn" data-mode="timeattack">SPEED RUSH</button>
+                <button class="menu-btn mode-btn" data-mode="accuracy">PRECISION</button>
+                <button class="menu-btn mode-btn" data-mode="zen">RELAX</button>
             </div>
         </div>
 
         <div class="menu-section">
-            <h3>TRACKING MODE</h3>
+            <h3>CONTROL METHOD</h3>
             <div class="menu-buttons">
-                <button class="menu-btn tracking-btn selected" data-tracking="hand">👆 HAND TRACKING</button>
+                <button class="menu-btn tracking-btn selected" data-tracking="hand">👆 GESTURE CONTROL</button>
             </div>
         </div>
 
@@ -762,10 +762,10 @@
         };
 
         const GAME_MODES = {
-            classic: { name: 'Classic', timeLimit: null, missLimit: null },
-            timeattack: { name: 'Time Attack', timeLimit: 60000, missLimit: null },
-            accuracy: { name: 'Accuracy', timeLimit: null, missLimit: 10 },
-            zen: { name: 'Zen', timeLimit: null, missLimit: null, peaceful: true }
+            classic: { name: 'Endless', timeLimit: null, missLimit: null },
+            timeattack: { name: 'Speed Rush', timeLimit: 60000, missLimit: null },
+            accuracy: { name: 'Precision', timeLimit: null, missLimit: 10 },
+            zen: { name: 'Relax', timeLimit: null, missLimit: null, peaceful: true }
         };
 
         // ==================== DOM ELEMENTS ====================
