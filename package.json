@@ -5,7 +5,8 @@
   "main": "index.html",
   "scripts": {
     "start": "serve .",
-    "build": "echo 'No build step required for static HTML'"
+    "build": "node build.js",
+    "dev": "serve ."
   },
   "keywords": [
     "hand-tracking",
