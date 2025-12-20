@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Fingers | Enhanced Edition</title>
+    <title>Focus Fingers</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
 
@@ -609,7 +609,7 @@
     <!-- Main Menu -->
     <div id="mainMenu" class="menu-screen hide">
         <div class="menu-title">FOCUS FINGERS</div>
-        <div class="menu-subtitle">ENHANCED EDITION</div>
+        <div class="menu-subtitle">BY SHRESTH PANDEY</div>
 
         <div class="menu-section">
             <h3>SELECT DIFFICULTY</h3>
@@ -633,11 +633,7 @@
         <div class="menu-section">
             <h3>TRACKING MODE</h3>
             <div class="menu-buttons">
-                <button class="menu-btn tracking-btn selected" data-tracking="hand">👆 HAND</button>
-                <button class="menu-btn tracking-btn" data-tracking="light">🔦 LIGHT</button>
-                <button class="menu-btn tracking-btn" data-tracking="red">🔴 RED OBJ</button>
-                <button class="menu-btn tracking-btn" data-tracking="green">🟢 GREEN OBJ</button>
-                <button class="menu-btn tracking-btn" data-tracking="blue">🔵 BLUE OBJ</button>
+                <button class="menu-btn tracking-btn selected" data-tracking="hand">👆 HAND TRACKING</button>
             </div>
         </div>
 
@@ -648,22 +644,17 @@
         <div class="menu-buttons" style="margin-top: 30px;">
             <button class="menu-btn secondary" id="tutorialBtn">HOW TO PLAY</button>
             <button class="menu-btn secondary" id="settingsBtn">SETTINGS</button>
-            <button class="menu-btn secondary" id="enableMouseBtn">🖱️ MOUSE MODE</button>
         </div>
     </div>
 
     <!-- Tutorial -->
     <div id="tutorial" class="tutorial hide">
         <h2>HOW TO PLAY</h2>
-        <p><strong>HAND MODE:</strong></p>
-        <p>👆 Point your finger - just <span class="highlight">HOVER</span> to hit (no click!)</p>
-
-        <p style="margin-top: 15px;"><strong>COLORED OBJECT MODE:</strong></p>
-        <p>🔴🟢🔵 Hold a <span class="highlight">red/green/blue object</span> (ball, toy, marker)</p>
-        <p>📱 Move the object to control - <span class="highlight">super stable!</span></p>
+        <p><strong>HAND TRACKING MODE:</strong></p>
+        <p>👆 Point your index finger - just <span class="highlight">HOVER</span> to hit (no click!)</p>
 
         <p style="margin-top: 15px;"><strong>GAMEPLAY:</strong></p>
-        <p>⏱️ <span class="highlight">Hover 0.3-0.4s</span> to hit (EASIER NOW!)</p>
+        <p>⏱️ <span class="highlight">Hover 0.3-0.4s</span> to hit targets</p>
         <p>📊 Watch <span class="highlight">yellow circle</span> fill as you hover</p>
         <p>⚡ Build <span class="highlight">combos</span> for higher scores</p>
         <p>💎 Collect <span class="highlight">golden power-ups</span></p>
@@ -881,8 +872,8 @@
         // Audio Context
         let audioContext = null;
 
-        // Tracking mode
-        let trackingMode = 'hand'; // 'hand', 'light', 'red', 'green', 'blue', 'mouse'
+        // Tracking mode - Only hand tracking supported
+        let trackingMode = 'hand'; // Only 'hand' mode available
         let lightCanvas = document.createElement('canvas');
         let lightCtx = lightCanvas.getContext('2d');
 
@@ -1820,61 +1811,31 @@
 
         // ==================== MEDIAPIPE HANDS ====================
         function onResults(results) {
-            if (trackingMode === 'light') {
-                const lightPos = findBrightestPoint();
-                handDetected = lightPos.detected;
+            // Only hand tracking mode supported
+            detectionBuffer.push(results.multiHandLandmarks && results.multiHandLandmarks.length > 0);
+            if (detectionBuffer.length > DETECTION_BUFFER_SIZE) {
+                detectionBuffer.shift();
+            }
 
-                if (lightPos.detected) {
-                    targetCursorX = (1 - lightPos.x) * canvas.width;
-                    targetCursorY = lightPos.y * canvas.height;
-                    document.getElementById('statusText').textContent =
-                        hoveringTarget ? 'HOVERING... (LIGHT)' : 'TRACKING LIGHT 🔦';
-                } else {
-                    hoveringTarget = null;
-                    document.getElementById('statusText').textContent = 'NO LIGHT DETECTED';
-                }
-            } else if (trackingMode === 'red' || trackingMode === 'green' || trackingMode === 'blue') {
-                // Color object tracking
-                const colorPos = findColoredObject(trackingMode);
-                handDetected = colorPos.detected;
+            const detectedCount = detectionBuffer.filter(d => d).length;
+            handDetected = detectedCount >= Math.ceil(DETECTION_BUFFER_SIZE / 2);
 
-                if (colorPos.detected) {
-                    targetCursorX = (1 - colorPos.x) * canvas.width;
-                    targetCursorY = colorPos.y * canvas.height;
-                    const emoji = trackingMode === 'red' ? '🔴' : trackingMode === 'green' ? '🟢' : '🔵';
-                    document.getElementById('statusText').textContent =
-                        hoveringTarget ? `HOVERING... (${trackingMode.toUpperCase()})` : `TRACKING ${emoji}`;
-                } else {
-                    hoveringTarget = null;
-                    document.getElementById('statusText').textContent = `NO ${trackingMode.toUpperCase()} OBJECT DETECTED`;
-                }
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8];
+
+                targetCursorX = (1 - indexTip.x) * canvas.width;
+                targetCursorY = indexTip.y * canvas.height;
+
+                const trackingQuality = detectedCount === DETECTION_BUFFER_SIZE ? 'EXCELLENT' : 'GOOD';
+                document.getElementById('statusText').textContent =
+                    hoveringTarget ? `HOVERING... (${trackingQuality})` : `HAND TRACKING ${trackingQuality}`;
             } else {
-                // Hand tracking mode
-                detectionBuffer.push(results.multiHandLandmarks && results.multiHandLandmarks.length > 0);
-                if (detectionBuffer.length > DETECTION_BUFFER_SIZE) {
-                    detectionBuffer.shift();
-                }
-
-                const detectedCount = detectionBuffer.filter(d => d).length;
-                handDetected = detectedCount >= Math.ceil(DETECTION_BUFFER_SIZE / 2);
-
-                if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                    const landmarks = results.multiHandLandmarks[0];
-                    const indexTip = landmarks[8];
-
-                    targetCursorX = (1 - indexTip.x) * canvas.width;
-                    targetCursorY = indexTip.y * canvas.height;
-
-                    const trackingQuality = detectedCount === DETECTION_BUFFER_SIZE ? 'EXCELLENT' : 'GOOD';
-                    document.getElementById('statusText').textContent =
-                        hoveringTarget ? `HOVERING... (${trackingQuality})` : `TRACKING ${trackingQuality}`;
+                if (handDetected) {
+                    document.getElementById('statusText').textContent = 'HAND TRACKING (WEAK SIGNAL)';
                 } else {
-                    if (handDetected) {
-                        document.getElementById('statusText').textContent = 'TRACKING (WEAK SIGNAL)';
-                    } else {
-                        hoveringTarget = null;
-                        document.getElementById('statusText').textContent = 'NO HAND - SHOW HAND TO CAMERA';
-                    }
+                    hoveringTarget = null;
+                    document.getElementById('statusText').textContent = 'NO HAND - SHOW HAND TO CAMERA';
                 }
             }
         }
