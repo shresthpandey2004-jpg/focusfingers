@@ -767,11 +767,30 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
         .theme-btn.active {
             border-color: #fff;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transform: scale(1.15);
+        }
+
+        .theme-btn.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
         }
 
         .theme-btn.dark { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
@@ -974,43 +993,86 @@
             }
         }
 
-        /* Theme Variables */
-        :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --bg-tertiary: #0f3460;
-            --accent-primary: #4ecdc4;
-            --accent-secondary: #ff6b6b;
-            --accent-tertiary: #ffeaa7;
-            --text-primary: #ffffff;
+        /* Theme Classes - Direct styling for immediate visual impact */
+        body.theme-neon {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #2e0a4f 100%) !important;
         }
 
-        /* Theme Classes */
-        body.theme-neon {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a0a2e;
-            --bg-tertiary: #2e0a4f;
-            --accent-primary: #ff006e;
-            --accent-secondary: #8338ec;
-            --accent-tertiary: #3a86ff;
+        body.theme-neon .menu-screen {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #2e0a4f 100%) !important;
+        }
+
+        body.theme-neon .menu-title {
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #ff006e, #8338ec) !important;
+            background-size: 300% 300% !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        body.theme-neon .menu-btn {
+            border-color: #ff006e !important;
+            color: #ff006e !important;
+            background: rgba(255, 0, 110, 0.1) !important;
+        }
+
+        body.theme-neon .menu-btn:hover {
+            background: #ff006e !important;
+            color: #0a0a0a !important;
         }
 
         body.theme-cyber {
-            --bg-primary: #0d1b2a;
-            --bg-secondary: #1b263b;
-            --bg-tertiary: #415a77;
-            --accent-primary: #00ff41;
-            --accent-secondary: #00d9ff;
-            --accent-tertiary: #ff6b6b;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%) !important;
+        }
+
+        body.theme-cyber .menu-screen {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%) !important;
+        }
+
+        body.theme-cyber .menu-title {
+            background: linear-gradient(45deg, #00ff41, #00d9ff, #ff6b6b, #00ff41, #00d9ff) !important;
+            background-size: 300% 300% !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        body.theme-cyber .menu-btn {
+            border-color: #00ff41 !important;
+            color: #00ff41 !important;
+            background: rgba(0, 255, 65, 0.1) !important;
+        }
+
+        body.theme-cyber .menu-btn:hover {
+            background: #00ff41 !important;
+            color: #0d1b2a !important;
         }
 
         body.theme-sunset {
-            --bg-primary: #2d1b69;
-            --bg-secondary: #11052c;
-            --bg-tertiary: #3d2352;
-            --accent-primary: #ff9a56;
-            --accent-secondary: #ff6b9d;
-            --accent-tertiary: #c44569;
+            background: linear-gradient(135deg, #2d1b69 0%, #11052c 50%, #3d2352 100%) !important;
+        }
+
+        body.theme-sunset .menu-screen {
+            background: linear-gradient(135deg, #2d1b69 0%, #11052c 50%, #3d2352 100%) !important;
+        }
+
+        body.theme-sunset .menu-title {
+            background: linear-gradient(45deg, #ff9a56, #ff6b9d, #c44569, #ff9a56, #ff6b9d) !important;
+            background-size: 300% 300% !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        body.theme-sunset .menu-btn {
+            border-color: #ff9a56 !important;
+            color: #ff9a56 !important;
+            background: rgba(255, 154, 86, 0.1) !important;
+        }
+
+        body.theme-sunset .menu-btn:hover {
+            background: #ff9a56 !important;
+            color: #2d1b69 !important;
         }
     </style>
 </head>
@@ -3059,14 +3121,22 @@
 
         function applyTheme(theme) {
             currentTheme = theme;
-            document.body.className = theme !== 'dark' ? `theme-${theme}` : '';
+            
+            // Remove all theme classes first
+            document.body.classList.remove('theme-neon', 'theme-cyber', 'theme-sunset');
+            
+            // Apply new theme class
+            if (theme !== 'dark') {
+                document.body.classList.add(`theme-${theme}`);
+            }
             
             // Update active button
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.theme === theme);
             });
             
-            // Update canvas background gradient
+            // Force update canvas background
+            const canvas = document.getElementById('gameCanvas');
             const gradients = {
                 dark: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
                 neon: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #2e0a4f 100%)',
@@ -3074,10 +3144,17 @@
                 sunset: 'linear-gradient(135deg, #2d1b69 0%, #11052c 50%, #3d2352 100%)'
             };
             
+            // Update canvas style
+            canvas.style.background = gradients[theme];
+            
+            // Update body background
             document.body.style.background = gradients[theme];
             
+            // Save theme
             localStorage.setItem('focusFingers_theme', theme);
             playSound('menu');
+            
+            console.log(`Theme applied: ${theme}`); // Debug log
         }
 
         // ==================== PHASE 3: GUIDED TUTORIAL ====================
