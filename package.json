@@ -1,18 +1,51 @@
 {
   "name": "focus-fingers",
-  "version": "1.0.0",
-  "description": "Hand tracking rhythm game by Shresth Pandey",
+  "version": "1.4.0",
+  "description": "An innovative hand tracking rhythm game created by Shresth Pandey using vanilla JavaScript and MediaPipe",
   "main": "index.html",
   "scripts": {
-    "start": "echo 'Open index.html in browser'",
-    "dev": "echo 'Open index.html in browser'"
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "echo 'Open index.html in browser'",
+    "test": "echo \"Open index.html in browser to test\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shresthpandey2004-jpg/focusfingers.git"
   },
   "keywords": [
     "hand-tracking",
     "rhythm-game",
+    "computer-vision",
+    "mediapipe",
     "javascript",
-    "game"
+    "canvas",
+    "webrtc",
+    "game-development",
+    "interactive",
+    "web-game",
+    "gesture-control",
+    "real-time",
+    "educational",
+    "open-source"
   ],
-  "author": "Shresth Pandey",
-  "license": "MIT"
+  "author": {
+    "name": "Shresth Pandey",
+    "email": "shresthpandey2004@gmail.com",
+    "url": "https://github.com/shresthpandey2004-jpg"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shresthpandey2004-jpg/focusfingers/issues"
+  },
+  "homepage": "https://github.com/shresthpandey2004-jpg/focusfingers#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "Chrome >= 80",
+    "Firefox >= 75",
+    "Safari >= 13",
+    "Edge >= 80"
+  ]
 }
