@@ -29,9 +29,9 @@ git push -u origin main
 Or use these commands:
 
 ```bash
-cd c:\Users\ABHAY\hand
+cd "C:\Users\Shreshth\Documents\tracking game hand"
 
-git remote add origin https://github.com/YOUR_USERNAME/hand-track-rhythm.git
+git remote add origin https://github.com/shresthpandey2004-jpg/focusfingers.git
 git branch -M main  
 git push -u origin main
 ```
